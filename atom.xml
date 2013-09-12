@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[ChatStorm - DevBlog]]></title>
+  <link href="http://zyndiecate.github.io/atom.xml" rel="self"/>
+  <link href="http://zyndiecate.github.io/"/>
+  <updated>2013-09-12T12:56:27+02:00</updated>
+  <id>http://zyndiecate.github.io/</id>
+  <author>
+    <name><![CDATA[Tim Schindler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[test post]]></title>
+    <link href="http://zyndiecate.github.io/blog/2013/09/11/test-post/"/>
+    <updated>2013-09-11T23:48:00+02:00</updated>
+    <id>http://zyndiecate.github.io/blog/2013/09/11/test-post</id>
+    <content type="html"><![CDATA[<h1>foo bar</h1>
+
+<p>blondex haaar</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>coffee master.coffee --single-process
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">method = </span><span class="p">()</span> <span class="nf">-&gt;</span>
+</span><span class='line'>  <span class="nv">foo =</span>
+</span><span class='line'>    <span class="nv">one: </span><span class="mi">123</span><span class="nx">e23</span>
+</span><span class='line'>    <span class="nv">two: </span><span class="mi">22432</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;foobar&quot;</span><span class="p">,</span> <span class="nx">foo</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+</feed>
