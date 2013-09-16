@@ -7,7 +7,10 @@
 	<meta name="author" content="Tim Schindler">
 
 	
-	<meta name="description" content="Creating Octopress Blog With Github Pages From Scratch 11Sep foo bar bloggithub pagesoctopress Please enable JavaScript to view the comments powered &hellip;">
+	<meta name="description" content="Creating Octopress Blog With Github Pages From Scratch 11Sep dependencies terminal
+ruby
+bundler (gem install bundler)
+git intro TL;DR you will have &hellip;">
 	
 
 	<link href="/atom.xml" rel="alternate" title="ChatStorm - DevBlog" type="application/atom+xml">
@@ -73,27 +76,170 @@
 </header>
 <div class="entry-content">
   
-    <!--- choose theme -->
+    <h1>dependencies</h1>
+
+<ul>
+<li>terminal</li>
+<li>ruby</li>
+<li>bundler (<code>gem install bundler</code>)</li>
+<li>git</li>
+</ul>
 
 
-<!--- install octopress -->
+<h1>intro</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>you will have 2 repositories</li>
+<li>first repository contains octopress</li>
+<li>second repository contains your blog</li>
+<li>first repository contains second repository</li>
+<li>develop your blog in first repository</li>
+<li>never change the second repository by yourself</li>
+</ul>
 
 
-<!--- 2 repositories -->
+<h3>long version</h3>
+
+<p>Here I want to explain how to setup a simple blog using octopress and github
+pages. The important thing to understand how to setup and work with a octopress
+blog is that you will have 2 repositories. The first repository will contain
+octopress itself. The second repository will contain the source of your
+published blog, that github uses to serve your blog. The first repository will
+also contain the source of your blog, what means that it contains the second
+repository as well. The first repository containing the octopress source is
+supposed to be your working place, where you are able to develop your blog
+posts. Octopress provides some commands to make your life easy and to help you
+writing your blog posts. By deploying your blog, the source of it will be
+pushed to the second repository, what implies that the blog is pulished. Also
+Important to know is that you should never change the code of your second
+repository by yourself, because octopress should be the only instance that
+should prepare and change the code there. Otherwise you would create conflicts
+in deployments.</p>
+
+<h1>install octopress</h1>
+
+<h3>TL;DR</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone git://github.com/imathis/octopress.git blog.your-site.com
+</span><span class='line'><span class="nb">cd </span>blog.your-site.com
+</span><span class='line'>bundle install
+</span><span class='line'>rake install
+</span></code></pre></td></tr></table></div></figure>
 
 
-<!--- deploy -->
+<h3>long version</h3>
+
+<p>At first you need to clone octopress, to create your first repository. You
+can name your repositories to your likes and needs. I just suggest how I did.
+So in my case I named the repository containing octopress blog.chatstorm.de.
+After cloning octopress you need to install octopress&rsquo;s dependencies. When
+all is done you can choose a theme. If the default theme fits your needs you
+can install it using the last line <code>rake install</code>.</p>
+
+<h1>choose a theme</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li><a href="http://opthemes.com/">http://opthemes.com/</a></li>
+<li><a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes</a></li>
+<li><code>git clone git://github.com/git-user/theme-name.git .themes/theme-name</code></li>
+<li><code>rake install["theme-name"]</code></li>
+<li><code>rake generate</code></li>
+</ul>
 
 
-<!--- setup dns -->
+<h3>long version</h3>
+
+<p>There are different sites providing octopress themes. I listed the best I found
+above. They are free and cool enough. Just select one of your choice and install
+it by cloning it into your <code>.themes</code> directory. After cloning your selected theme
+you can install it using the rake task shown above too.</p>
+
+<h1>developing</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li><code>rake new_post["title"]</code></li>
+<li><code>rake preview</code></li>
+<li>write your post or change something in <code>sass</code> directory</li>
+</ul>
 
 
-<p>foo</p>
+<h3>long version</h3>
 
-<!-- more -->
+<p>Creating a new post is simple. Just use the rake task. Running <code>rake preview</code>
+starts a server listening on <code>localhost:4000</code>. When you write your post the
+server restarts and you see your changes in the browser. The same happens
+changing styles in the <code>sass</code> directory. Most themes provide a custom directory
+where you should change styles by your own.</p>
+
+<h1>deployment</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>create second repository <code>user-name.github.io</code></li>
+<li><code>rake setup_github_pages</code></li>
+<li><code>rake generate</code></li>
+<li><code>rake deploy</code></li>
+</ul>
 
 
-<p>bar</p>
+<h3>long version</h3>
+
+<p>As mentioned there is a second repository needed holding the published blog
+source.  It is important to use the necessary naming convention. My repository
+is named <code>zyndiecate.github.io</code>, because my github username is <code>zyndiecate</code>.
+Not respecting that naming convention will cause deployment issues, so your
+blog couldn&rsquo;t be released. Executing <code>rake setup_github_pages</code> will ask for the
+repository url. Further generating the source and deploying it is simple as
+well.</p>
+
+<h1>setup dns</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>create <code>CNAME</code> file in <code>./source</code> directory with content <code>blog.your-site.com</code></li>
+<li>create dns entry at your domain provider for the domain <code>blog.your-site.com</code> pointing to <code>user-name.github.io</code></li>
+</ul>
+
+
+<h1>long version</h1>
+
+<p>What we want to achieve is to create a special file named <code>CNAME</code> in our second
+repository, thus in our blog source code. To do so we create the file in our
+first repositories <code>source</code> folder, because that directory is going to be
+merged and deployed in our second repository. The <code>CNAME</code> file should contain
+the domain of your blog. In my case it is holding <code>blog.chatstorm.de</code>. When you
+have created and deployed the <code>CNAME</code> file, you can create the dns record for
+your blog at your domain provider. Here we want to redirect all requests a user
+creates to <code>blog.your-site.com</code> to the original domain <code>user-name.github.io</code>
+handled by a github server. So just create a cname <code>user-name.github.io</code> for
+your subdomain <code>blog.your-site.com</code>.</p>
+
+<h1>finish</h1>
+
+<p>Finally we should be done and your blog should be set up. In case I missed something
+or you find some problems, plaese use the comments below. Cheers.</p>
+
+<h1>sources</h1>
+
+<ul>
+<li><a href="http://octopress.org/docs/setup/">http://octopress.org/docs/setup/</a></li>
+<li><a href="http://octopress.org/docs/deploying/github/">http://octopress.org/docs/deploying/github/</a></li>
+<li><a href="http://opthemes.com/">http://opthemes.com/</a></li>
+<li><a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes</a></li>
+</ul>
+
 
     
       <div class="sharing">
@@ -119,7 +265,7 @@
 
 
 
-	<div class="tags"><a class='category' href='/blog/categories/blog/'>blog</a><a class='category' href='/blog/categories/github-pages/'>github pages</a><a class='category' href='/blog/categories/octopress/'>octopress</a></div>
+	<div class="tags"><a class='category' href='/blog/categories/blog/'>blog</a><a class='category' href='/blog/categories/github/'>github</a><a class='category' href='/blog/categories/octopress/'>octopress</a></div>
 
     
   </footer>
@@ -136,6 +282,10 @@
 	
 	
 	
+	<a class="twitter" href="http://twitter.com/zyndiecate" title="Twitter">Twitter</a>
+	
+	
+	<a class="github" href="https://github.com/zyndiecate" title="GitHub">GitHub</a>
 	
 	
 	<a class="rss" href="/atom.xml" title="RSS">RSS</a>
