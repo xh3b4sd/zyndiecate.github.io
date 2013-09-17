@@ -4,7 +4,7 @@
   <title><![CDATA[ChatStorm - DevBlog]]></title>
   <link href="http://blog.chatstorm.de/atom.xml" rel="self"/>
   <link href="http://blog.chatstorm.de/"/>
-  <updated>2013-09-16T20:40:05+02:00</updated>
+  <updated>2013-09-17T21:55:04+02:00</updated>
   <id>http://blog.chatstorm.de/</id>
   <author>
     <name><![CDATA[Tim Schindler]]></name>
@@ -12,6 +12,187 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[how to translate your expressjs app pages]]></title>
+    <link href="http://blog.chatstorm.de/blog/2013/09/17/how-to-translate-your-expressjs-app-pages/"/>
+    <updated>2013-09-17T19:25:00+02:00</updated>
+    <id>http://blog.chatstorm.de/blog/2013/09/17/how-to-translate-your-expressjs-app-pages</id>
+    <content type="html"><![CDATA[<h1>intro</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>there isn&rsquo;t the one and only best solution to translate your app in nodejs</li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>In that post I will show one aproach of translating content in an expressjs app
+as we do so in <a href="https://chatstorm.de.">https://chatstorm.de.</a> There are different approaches to
+implement translations and all of them have their up and down sides. When I
+looked around to find a practical way to translate nodejs apps, I realized that
+nodejs and its libraries is still a very young technology where a lot of
+problems are not solved yet. Many cool people implemented their own prototypes
+of translations, but none of them really grew up until now. That is why I
+decided to create my own appoach.  Here we go.</p>
+
+<h1>my way</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>stupid simple</li>
+<li>check preferred browser language based on request</li>
+<li>set information of preferred language in view</li>
+<li>serve all content for all languages</li>
+<li>hide all content of all languages by default</li>
+<li>only show that content matching the preferred language</li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>The first thing we need to do is to get the information of the language the
+view has to use. I used a package called
+<a href="https://github.com/jed/locale">locale</a>.</p>
+
+<p>Below is described how to install it.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>npm install locale
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Below is described how to use it.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">Locale  = </span><span class="nx">require</span> <span class="s">&quot;locale&quot;</span>
+</span><span class='line'><span class="nv">Express = </span><span class="nx">require</span> <span class="s">&quot;express&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">supportedLanguages = </span><span class="p">[</span> <span class="s">&quot;en&quot;</span><span class="p">,</span> <span class="s">&quot;en_US&quot;</span><span class="p">,</span> <span class="s">&quot;en-US&quot;</span><span class="p">,</span> <span class="s">&quot;de&quot;</span><span class="p">,</span> <span class="s">&quot;de_DE&quot;</span><span class="p">,</span> <span class="s">&quot;de-DE&quot;</span> <span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Express</span><span class="p">.</span><span class="nx">use</span> <span class="nx">Locale</span><span class="p">(</span><span class="nx">supportedLanguages</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In that way there will be a request property available you can pass to your
+view.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">locals        = </span><span class="p">{}</span>
+</span><span class='line'><span class="nv">locals.locale = </span><span class="nx">req</span><span class="p">.</span><span class="nx">locale</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">res</span><span class="p">.</span><span class="nx">render</span> <span class="s">&quot;view_name&quot;</span><span class="p">,</span> <span class="nx">locals</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In our view we set the language information as class attribute of an HTML
+element as described below. Here is shown a piece of jade snippet, where
+we create an HTML element inside the body element, having the ID <code>page</code>
+and the class <code>locale</code>, that contains the language information.</p>
+
+<p>Having the language information present in our views, we are able to show the
+matching translations. Below we see two heading elements having different
+classes describing the translated language. All elements having the class
+<code>tr-en</code> or <code>tr-de</code> will be hidden by default. Related to the language
+information we have already set, we can show the element matching the language.</p>
+
+<p>Here we see the css.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.tr-en</span><span class="o">,</span> <span class="nc">.tr-de</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">display</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.en</span> <span class="nc">.tr-en</span><span class="o">,</span>
+</span><span class='line'><span class="nc">.en_US</span> <span class="nc">.tr-en</span><span class="o">,</span>
+</span><span class='line'><span class="nc">.en-US</span> <span class="nc">.tr-en</span><span class="o">,</span>
+</span><span class='line'><span class="nc">.de</span> <span class="nc">.tr-de</span><span class="o">,</span>
+</span><span class='line'><span class="nc">.de_DE</span> <span class="nc">.tr-de</span><span class="o">,</span>
+</span><span class='line'><span class="nc">.de-DE</span> <span class="nc">.tr-de</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="o">-</span><span class="k">block</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here we see the jade view.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='jade'><span class='line'><span class="nt">body</span>
+</span><span class='line'>  <span class="nf">#page</span>(<span class="na">class=</span><span class="nv">locale</span>)
+</span><span class='line'>    <span class="nt">h1</span><span class="nc">.tr-en</span> Here is my english content
+</span><span class='line'>    <span class="nt">h1</span><span class="nc">.tr-de</span> Das hier ist mein deutscher Inhalt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>summary</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>+ stupid simple</li>
+<li>- deliver all content, even if we don&rsquo;t need it</li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>That&rsquo;s it. Here we have a very simple solution to translate content of our
+expressjs app. It is simpler than everything else I found on the web and I am
+fine with that. The only thing that is not that beautifull is, that we need
+to deliver all content of all translations, even if we don&rsquo;t want to show it.
+Further you could think about making the user be able to select a language by
+himself clicking a button. That would be very simple as well, because all you
+need to do is to change the language information class attribute on click.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[clear dns cache in chrome]]></title>
+    <link href="http://blog.chatstorm.de/blog/2013/09/17/clear-dns-cache-in-chrome/"/>
+    <updated>2013-09-17T13:06:00+02:00</updated>
+    <id>http://blog.chatstorm.de/blog/2013/09/17/clear-dns-cache-in-chrome</id>
+    <content type="html"><![CDATA[<h3>TL;DR</h3>
+
+<ul>
+<li>go to <code>chrome://net-internals/#dns</code></li>
+<li>click <code>clear host cache</code></li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>Sometimes it is necessary to clear the dns cache of a browser. I am using
+chrome, because it is awesome. In chrome you just need to visit
+<code>chrome://net-internals/#dns</code>. There you can see the overview of that settings
+page. Just clicking on the <code>clear host cache</code> button will remove all current
+state chrome have cached to resolve IP adresses. That&rsquo;s it.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[creating octopress blog with github pages from scratch]]></title>
