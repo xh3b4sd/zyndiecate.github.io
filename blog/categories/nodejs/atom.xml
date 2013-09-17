@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: nodejs | ChatStorm - DevBlog]]></title>
+  <link href="http://blog.chatstorm.de/blog/categories/nodejs/atom.xml" rel="self"/>
+  <link href="http://blog.chatstorm.de/"/>
+  <updated>2013-09-17T21:59:35+02:00</updated>
+  <id>http://blog.chatstorm.de/</id>
+  <author>
+    <name><![CDATA[Tim Schindler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[how to translate your expressjs app pages]]></title>
+    <link href="http://blog.chatstorm.de/blog/2013/09/17/how-to-translate-your-expressjs-app-pages/"/>
+    <updated>2013-09-17T19:25:00+02:00</updated>
+    <id>http://blog.chatstorm.de/blog/2013/09/17/how-to-translate-your-expressjs-app-pages</id>
+    <content type="html"><![CDATA[<h1>intro</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>there isn&rsquo;t the one and only best solution to translate your app in nodejs</li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>In that post I will show one aproach of translating content in an expressjs app
+as we do so in <a href="https://chatstorm.de.">https://chatstorm.de.</a> There are different approaches to
+implement translations and all of them have their up and down sides. When I
+looked around to find a practical way to translate nodejs apps, I realized that
+nodejs and its libraries is still a very young technology where a lot of
+problems are not solved yet. Many cool people implemented their own prototypes
+of translations, but none of them really grew up until now. That is why I
+decided to create my own appoach.  Here we go.</p>
+
+<h1>my way</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>stupid simple</li>
+<li>check preferred browser language based on request</li>
+<li>set information of preferred language in view</li>
+<li>serve all content for all languages</li>
+<li>hide all content of all languages by default</li>
+<li>only show that content matching the preferred language</li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>The first thing we need to do is to get the information of the language the
+view has to use. I used a package called
+<a href="https://github.com/jed/locale">locale</a>.</p>
+
+<p>Below is described how to install it.
+<code>bash
+npm install locale
+</code></p>
+
+<p>Below is described how to use it.
+```coffeescript
+Locale  = require &ldquo;locale&rdquo;
+Express = require &ldquo;express&rdquo;</p>
+
+<p>supportedLanguages = [ &ldquo;en&rdquo;, &ldquo;en_US&rdquo;, &ldquo;en-US&rdquo;, &ldquo;de&rdquo;, &ldquo;de_DE&rdquo;, &ldquo;de-DE&rdquo; ]</p>
+
+<p>Express.use Locale(supportedLanguages)
+```</p>
+
+<p>In that way there will be a request property available you can pass to your
+view.
+```coffeescript
+locals        = {}
+locals.locale = req.locale</p>
+
+<p>res.render &ldquo;view_name&rdquo;, locals
+```</p>
+
+<p>In our view we set the language information as class attribute of an HTML
+element as described below. Here is shown a piece of jade snippet, where
+we create an HTML element inside the body element, having the ID <code>page</code>
+and the class <code>locale</code>, that contains the language information.</p>
+
+<p>Having the language information present in our views, we are able to show the
+matching translations. Below we see two heading elements having different
+classes describing the translated language. All elements having the class
+<code>tr-en</code> or <code>tr-de</code> will be hidden by default. Related to the language
+information we have already set, we can show the element matching the language.</p>
+
+<p>Here we see the css.
+```css
+.tr-en, .tr-de {
+  display: none;
+}</p>
+
+<p>.en .tr-en,
+.en_US .tr-en,
+.en-US .tr-en,
+.de .tr-de,
+.de_DE .tr-de,
+.de-DE .tr-de {
+  display: inline-block;
+}
+```</p>
+
+<p>Here we see the jade view.
+```jade
+body
+  #page(class=locale)</p>
+
+<pre><code>h1.tr-en Here is my english content
+h1.tr-de Das hier ist mein deutscher Inhalt
+</code></pre>
+
+<p>```</p>
+
+<h1>summary</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>+ stupid simple</li>
+<li>- deliver all content, even if we don&rsquo;t need it</li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>That&rsquo;s it. Here we have a very simple solution to translate content of our
+expressjs app. It is simpler than everything else I found on the web and I am
+fine with that. The only thing that is not that beautifull is, that we need
+to deliver all content of all translations, even if we don&rsquo;t want to show it.
+Further you could think about making the user be able to select a language by
+himself clicking a button. That would be very simple as well, because all you
+need to do is to change the language information class attribute on click.</p>
+]]></content>
+  </entry>
+  
+</feed>

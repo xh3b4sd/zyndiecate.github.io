@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: dns | ChatStorm - DevBlog]]></title>
+  <link href="http://blog.chatstorm.de/blog/categories/dns/atom.xml" rel="self"/>
+  <link href="http://blog.chatstorm.de/"/>
+  <updated>2013-09-17T21:59:35+02:00</updated>
+  <id>http://blog.chatstorm.de/</id>
+  <author>
+    <name><![CDATA[Tim Schindler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[clear dns cache in chrome]]></title>
+    <link href="http://blog.chatstorm.de/blog/2013/09/17/clear-dns-cache-in-chrome/"/>
+    <updated>2013-09-17T13:06:00+02:00</updated>
+    <id>http://blog.chatstorm.de/blog/2013/09/17/clear-dns-cache-in-chrome</id>
+    <content type="html"><![CDATA[<h3>TL;DR</h3>
+
+<ul>
+<li>go to <code>chrome://net-internals/#dns</code></li>
+<li>click <code>clear host cache</code></li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>Sometimes it is necessary to clear the dns cache of a browser. I am using
+chrome, because it is awesome. In chrome you just need to visit
+<code>chrome://net-internals/#dns</code>. There you can see the overview of that settings
+page. Just clicking on the <code>clear host cache</code> button will remove all current
+state chrome have cached to resolve IP adresses. That&rsquo;s it.</p>
+]]></content>
+  </entry>
+  
+</feed>
