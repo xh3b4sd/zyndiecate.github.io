@@ -7,7 +7,9 @@
 	<meta name="author" content="Tim Schindler">
 
 	
-	<meta name="description" content="intro TL;DR there isn&rsquo;t the one and only best solution to translate your app in nodejs long version In that post I will show one aproach of &hellip;">
+	<meta name="description" content="intro TL;DR nodejs is single threaded
+spawn one process per available processor
+https://github.com/zyndiecate/clustr-node long version Entering &hellip;">
 	
 
 	<link href="/atom.xml" rel="alternate" title="ChatStorm - DevBlog" type="application/atom+xml">
@@ -52,6 +54,142 @@
 </nav>
 </header>
 	<div id="content" class="inner">
+
+
+	<article class="post"><header>
+  
+  <h1 class="title"><a href="/blog/2013/09/18/multi-process-cluster-in-nodejs/">multi process cluster in nodejs</a></h1>
+  
+  
+
+
+
+
+
+
+
+
+	
+		<time datetime="2013-09-18T13:02:00+02:00">
+			<span class="day">18</span><span class="month">Sep</span>
+		</time>
+	
+
+</header>
+<div class="entry-content">
+  
+    <h1>intro</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>nodejs is single threaded</li>
+<li>spawn one process per available processor</li>
+<li><a href="https://github.com/zyndiecate/clustr-node">https://github.com/zyndiecate/clustr-node</a></li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>Entering nodeland you will recognize that your process is bound to one thread
+using the power of one processor. Heavy load applications will reach their
+limit very fast in the default setup. There are some ways to implement multi
+process cluster in nodejs, but the native cluster module doesn&rsquo;t look like that
+I was searching for. Further its current state s experimental and other
+libraries out there aren&rsquo;t that nice too. So I created
+<a href="https://github.com/zyndiecate/clustr-node">clustr-node</a>.</p>
+
+<h1>create a clustr</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li><code>npm install clustr-node</code></li>
+<li>one master file</li>
+<li>one worker file</li>
+<li>creating a cluster with four worker processes</li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>We install the <code>clustr-node</code> package an create two files. One file represents
+the master. In our setup the master spawns different workers, based on one
+worker file.</p>
+
+<p>Here we see the <code>master.coffee</code>. The master will be created and spawns 4
+workers.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">Clustr = </span><span class="nx">require</span> <span class="s">&quot;clustr-node&quot;</span>
+</span><span class='line'><span class="nv">master = </span><span class="nx">Clustr</span><span class="p">.</span><span class="nx">Master</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nv">options = </span><span class="p">{})</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">master</span><span class="p">.</span><span class="nx">spawn</span> <span class="p">[</span>
+</span><span class='line'>  <span class="p">{</span> <span class="nv">file: </span><span class="s">&quot;./worker.coffee&quot;</span><span class="p">,</span> <span class="nv">cpu: </span><span class="mi">0</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">{</span> <span class="nv">file: </span><span class="s">&quot;./worker.coffee&quot;</span><span class="p">,</span> <span class="nv">cpu: </span><span class="mi">1</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">{</span> <span class="nv">file: </span><span class="s">&quot;./worker.coffee&quot;</span><span class="p">,</span> <span class="nv">cpu: </span><span class="mi">2</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">{</span> <span class="nv">file: </span><span class="s">&quot;./worker.coffee&quot;</span><span class="p">,</span> <span class="nv">cpu: </span><span class="mi">3</span> <span class="p">}</span>
+</span><span class='line'><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">master</span><span class="p">.</span><span class="nx">onClusterStarted</span> <span class="p">()</span> <span class="nf">-&gt;</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;cluster is started&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here we see the <code>worker.coffee</code>. The worker will be created and registers to
+the cluster.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">Clustr = </span><span class="nx">require</span> <span class="s">&quot;clustr-node&quot;</span>
+</span><span class='line'><span class="nv">worker = </span><span class="nx">Clustr</span><span class="p">.</span><span class="nx">Worker</span><span class="p">.</span><span class="nx">create</span>
+</span><span class='line'>  <span class="nv">group: </span><span class="s">&quot;webWorker&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">worker</span><span class="p">.</span><span class="nx">emitReady</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Running <code>coffee master.coffee</code> in that setup will create a cluster having one
+master process and four worker processes, where each worker is bound to its own
+cpu. <strong>Note that cpu binding only works on unix systems providing the <code>taskset</code>
+command.</strong> The cool thing here is that we have one dedicated file for the
+master and on for the workers. In that way we don&rsquo;t need ugly conditions
+checking which code should be executed by masters and which ones by workers. We
+can build our cluster modular as it should be and everything can be clearly
+separated.</p>
+
+<p>That is all I want to show in this post. For more and detailed information
+check the <a href="https://github.com/zyndiecate/clustr-node">repository</a>. Its readme
+and its examples covers the most you need to know.</p>
+
+  
+  
+  <footer class="meta">
+    
+
+
+
+	<div class="tags"><a class='category' href='/blog/categories/cluster/'>cluster</a><a class='category' href='/blog/categories/multi-process/'>multi-process</a><a class='category' href='/blog/categories/nodejs/'>nodejs</a></div>
+
+    
+  </footer>
+  
+</div>
+</article>
 
 
 	<article class="post"><header>

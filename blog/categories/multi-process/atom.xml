@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: multi-process | ChatStorm - DevBlog]]></title>
+  <link href="http://blog.chatstorm.de/blog/categories/multi-process/atom.xml" rel="self"/>
+  <link href="http://blog.chatstorm.de/"/>
+  <updated>2013-09-18T14:16:11+02:00</updated>
+  <id>http://blog.chatstorm.de/</id>
+  <author>
+    <name><![CDATA[Tim Schindler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[multi process cluster in nodejs]]></title>
+    <link href="http://blog.chatstorm.de/blog/2013/09/18/multi-process-cluster-in-nodejs/"/>
+    <updated>2013-09-18T13:02:00+02:00</updated>
+    <id>http://blog.chatstorm.de/blog/2013/09/18/multi-process-cluster-in-nodejs</id>
+    <content type="html"><![CDATA[<h1>intro</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li>nodejs is single threaded</li>
+<li>spawn one process per available processor</li>
+<li><a href="https://github.com/zyndiecate/clustr-node">https://github.com/zyndiecate/clustr-node</a></li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>Entering nodeland you will recognize that your process is bound to one thread
+using the power of one processor. Heavy load applications will reach their
+limit very fast in the default setup. There are some ways to implement multi
+process cluster in nodejs, but the native cluster module doesn&rsquo;t look like that
+I was searching for. Further its current state s experimental and other
+libraries out there aren&rsquo;t that nice too. So I created
+<a href="https://github.com/zyndiecate/clustr-node">clustr-node</a>.</p>
+
+<h1>create a clustr</h1>
+
+<h3>TL;DR</h3>
+
+<ul>
+<li><code>npm install clustr-node</code></li>
+<li>one master file</li>
+<li>one worker file</li>
+<li>creating a cluster with four worker processes</li>
+</ul>
+
+
+<h3>long version</h3>
+
+<p>We install the <code>clustr-node</code> package an create two files. One file represents
+the master. In our setup the master spawns different workers, based on one
+worker file.</p>
+
+<p>Here we see the <code>master.coffee</code>. The master will be created and spawns 4
+workers.
+```coffeescript
+Clustr = require &ldquo;clustr-node&rdquo;
+master = Clustr.Master.create(options = {})</p>
+
+<p>master.spawn [
+  { file: &ldquo;./worker.coffee&rdquo;, cpu: 0 }
+  { file: &ldquo;./worker.coffee&rdquo;, cpu: 1 }
+  { file: &ldquo;./worker.coffee&rdquo;, cpu: 2 }
+  { file: &ldquo;./worker.coffee&rdquo;, cpu: 3 }
+]</p>
+
+<p>master.onClusterStarted () &ndash;>
+  console.log &ldquo;cluster is started&rdquo;
+```</p>
+
+<p>Here we see the <code>worker.coffee</code>. The worker will be created and registers to
+the cluster.
+```coffeescript
+Clustr = require &ldquo;clustr-node&rdquo;
+worker = Clustr.Worker.create
+  group: &ldquo;webWorker&rdquo;</p>
+
+<p>worker.emitReady()
+```</p>
+
+<p>Running <code>coffee master.coffee</code> in that setup will create a cluster having one
+master process and four worker processes, where each worker is bound to its own
+cpu. <strong>Note that cpu binding only works on unix systems providing the <code>taskset</code>
+command.</strong> The cool thing here is that we have one dedicated file for the
+master and on for the workers. In that way we don&rsquo;t need ugly conditions
+checking which code should be executed by masters and which ones by workers. We
+can build our cluster modular as it should be and everything can be clearly
+separated.</p>
+
+<p>That is all I want to show in this post. For more and detailed information
+check the <a href="https://github.com/zyndiecate/clustr-node">repository</a>. Its readme
+and its examples covers the most you need to know.</p>
+]]></content>
+  </entry>
+  
+</feed>
